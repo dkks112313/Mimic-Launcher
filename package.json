@@ -1,0 +1,29 @@
+{
+  "name": "Mimic-Launcher",
+  "productName": "Mimic",
+  "version": "1.0.0",
+  "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron index.js",
+    "build-windows":  "electron-packager ./ mimi --platform=win32 --arch=x64",
+    "build-mac": "electron-packager ./ mimi --platform=darwin --arch=x64",
+    "build-linux": "electron-packager ./ mimi --platform=linux --arch=x64"
+  },
+  "devDependencies": {
+    "electron": "^34.0.0",
+    "electron-builder": "^25.1.8",
+    "electron-progressbar": "^2.2.1",
+    "electron-packager": "^17.1.2",
+    "typescript": "^4.9.4",
+    "@types/node": "^18.11.13"
+  },
+  "dependencies": {
+    "@electron/remote": "^2.1.2",
+    "electron-progressbar": "^2.2.1",
+    "core": "file:core",
+    "minecraft-launcher-core": "^3.18.2",
+    "tomate-loaders": "^2.0.2",
+    "adm-zip": "^0.5.9"
+  }
+}

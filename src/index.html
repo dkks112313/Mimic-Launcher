@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <title>Mimi Minecraft Launcher</title>
+    <link href="style.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+
+    <script>
+        window.electronAPI.onData((event, data) => {
+            console.log('Данные из Node:', data.message);
+        });
+    </script>
+</head>
+<body>
+<div class="app-container">
+    <nav class="sidebar">
+        <ul>
+            <li><a class="active" data-page="home" href="#" title="Home">🏠</a></li>
+            <li><a data-page="settings" href="#" title="Settings">⚙️</a></li>
+            <li><a data-page="mods" href="#" title="Mods">🧩</a></li>
+        </ul>
+    </nav>
+    <main class="content">
+        <div class="page active" id="home">
+            <div class="page-content">
+                <h1 class="pixel-title" id="innder">Welcome to Mimi Launcher</h1>
+                <div class="launcher-options">
+                    <div class="option-group">
+                        <label for="username">Username:</label>
+                        <input id="username" placeholder="Enter your Minecraft username" type="text">
+                    </div>
+                    <div class="option-group">
+                        <label for="version">Game Version:</label>
+                        <select id="version"></select>
+                    </div>
+                    <div class="option-group">
+                        <label for="modloader">Mod Loader:</label>
+                        <select id="modloader" onchange="changeFunction()">
+                            <option value="vanilla">Vanilla</option>
+                            <option value="forge">Forge</option>
+                            <option value="fabric">Fabric</option>
+                            <option value="quilt">Quilt</option>
+                            <option value="neoforge">NeoForge</option>
+                        </select>
+                    </div>
+                    <button id="launch-btn">Launch Game</button>
+                </div>
+                <div id="status-message"></div>
+            </div>
+        </div>
+        <div class="page" id="settings">
+            <div class="page-content">
+                <h1 class="pixel-title">Settings</h1>
+                <div class="launcher-options">
+                    <div class="option-group">
+                        <label for="memory">Memory Allocation:</label>
+                        <input id="memory" max="16" min="1" type="range" value="4">
+                        <span id="memory-value">4 GB</span>
+                    </div>
+                    <div class="option-group">
+                        <label for="java-path">Java Path:</label>
+                        <input id="java-path" placeholder="Enter Java path" type="text">
+                    </div>
+                    <div class="option-group">
+                        <label for="game-directory">Game Directory:</label>
+                        <input id="game-directory" placeholder="Enter game directory" type="text">
+                    </div>
+                    <button id="save-settings">Save Settings</button>
+                </div>
+            </div>
+        </div>
+        <div class="page" id="mods">
+            <div class="page-content">
+                <h1 class="pixel-title">Mods</h1>
+                <div class="launcher-options">
+                    <div class="option-group">
+                        <label for="mod-search">Search Mods:</label>
+                        <input id="mod-search" placeholder="Search for mods" type="text">
+                    </div>
+                    <div id="mod-list">
+                        <!-- Mod list will be populated dynamically -->
+                    </div>
+                    <button id="install-mods">Install Selected Mods</button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+<script src="render.js"></script>
+<script src="version.js"></script>
+<script src="navigation.js"></script>
+<script>
+    // Ждём полной загрузки DOM
+    document.addEventListener("DOMContentLoaded", () => {
+        // Получаем элементы ползунка и отображения значения памяти
+        const memorySlider = document.getElementById("memory");
+        const memoryValue = document.getElementById("memory-value");
+
+        // Устанавливаем начальное значение
+        memoryValue.textContent = `${memorySlider.value} GB`;
+
+        // Добавляем обработчик события для ползунка
+        memorySlider.addEventListener("input", () => {
+            // Обновляем текстовое значение
+            memoryValue.textContent = `${memorySlider.value} GB`;
+        });
+    });
+</script>
+</body>
+</html>
