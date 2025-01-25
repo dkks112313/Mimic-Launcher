@@ -23,7 +23,7 @@ const createWindow = () => {
     win.loadFile('src/index.html')
     win.setMenuBarVisibility(false)
 
-    win.webContents.send('data-from-node', { message: 'Привет, HTML!' });
+    win.webContents.send('data-from-node', { message: 'Hi, HTML!' });
 }
 
 app.whenReady().then(() => {
