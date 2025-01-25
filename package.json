@@ -6,9 +6,9 @@
   "main": "index.js",
   "scripts": {
     "start": "electron index.js",
-    "build-windows":  "electron-packager ./ mimi --platform=win32 --arch=x64",
-    "build-mac": "electron-packager ./ mimi --platform=darwin --arch=x64",
-    "build-linux": "electron-packager ./ mimi --platform=linux --arch=x64"
+    "build-windows":  "electron-packager ./ Mimic --platform=win32 --arch=x64",
+    "build-mac": "electron-packager ./ Mimic --platform=darwin --arch=x64",
+    "build-linux": "electron-packager ./ Mimic --platform=linux --arch=x64"
   },
   "devDependencies": {
     "electron": "^34.0.0",
