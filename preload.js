@@ -7,21 +7,24 @@ contextBridge.exposeInMainWorld('electron', {
             ipcRenderer.send(channel, data)
         }
     },
-
     onFromMain: (channel, callback) => {
         const validChannels = ['progress-update'];
         if (validChannels.includes(channel)) {
             ipcRenderer.on(channel, (event, ...args) => callback(...args))
         }
     },
-
     sendToPath: (channel, data) => {
         const validChannels = ['select-path-directory'];
         if (validChannels.includes(channel)) {
             ipcRenderer.send(channel, data)
         }
     },
-
+    openToPath: (channel, data) => {
+        const validChannels = ['open-path-directory'];
+        if (validChannels.includes(channel)) {
+            ipcRenderer.send(channel, data)
+        }
+    },
     sendToJava: (channel, data) => {
         const validChannels = ['select-path-java'];
         if (validChannels.includes(channel)) {

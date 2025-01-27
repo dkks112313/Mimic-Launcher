@@ -7,9 +7,20 @@
   "scripts": {
     "test": "node test.js",
     "start": "electron index.js",
-    "build-windows":  "electron-packager ./ Mimic --platform=win32 --arch=x64",
+    "dist": "electron-builder",
+    "build-windows":  "electron-packager ./ Mimic --platform=win32 --arch=x64 --prune=true --icon=./icon/icon.ico",
     "build-mac": "electron-packager ./ Mimic --platform=darwin --arch=x64",
     "build-linux": "electron-packager ./ Mimic --platform=linux --arch=x64"
+  },
+  "build": {
+    "productName": "Mimic-Launcher",
+    "appId": "mimic.app",
+    "win": {
+      "target": ["portable"]
+    },
+    "portable": {
+      "artifactName": "Mimic.exe"
+    }
   },
   "devDependencies": {
     "electron": "^34.0.0",
@@ -22,9 +33,13 @@
   "dependencies": {
     "@electron/remote": "^2.1.2",
     "electron-progressbar": "^2.2.1",
-    "core": "file:core",
     "minecraft-launcher-core": "^3.18.2",
     "tomate-loaders": "^2.0.2",
-    "adm-zip": "^0.5.9"
+    "7zip-bin": "^5.2.0",
+    "adm-zip": "^0.5.9",
+    "node-7z": "^3.0.0",
+    "node-fetch": "^2.6.9",
+    "prompt": "^1.2.1",
+    "tslib": "^2.4.1"
   }
 }

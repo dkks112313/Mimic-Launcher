@@ -2,14 +2,16 @@ const {app, BrowserWindow, ipcMain, dialog} = require("electron")
 const ProgressBar = require("electron-progressbar")
 
 const {Client, Authenticator} = require("minecraft-launcher-core")
-const {Launch, Mojang} = require("core")
+const {Launch, Mojang} = require("./core/build/Index")
 const {forge} = require("tomate-loaders")
 
 const path = require("path")
 const fs = require("fs")
+const {exec} = require("child_process")
 const {downloadJava} = require("./java-downloader/Java")
 
-dialog.showErrorBox = () => {}
+dialog.showErrorBox = () => {
+}
 
 let win
 
@@ -22,6 +24,7 @@ const createWindow = () => {
             nodeIntegration: false,
             contextIsolation: true,
         },
+        icon: path.join(__dirname, 'icon', 'icon.ico'),
     })
 
     win.loadFile('src/index.html')
@@ -58,6 +61,28 @@ async function openFolderDialog(channel) {
             win.webContents.send(channel, {path: selected_dir})
         })
 }
+
+ipcMain.on('open-path-directory', async (event, data) => {
+    let folderPath
+
+    if (data.path === undefined || data.path === '' || data.path === null) {
+        folderPath = path.join(path.resolve('./Minecraft'))
+
+        if (!fs.existsSync(folderPath)) {
+            fs.mkdirSync(folderPath)
+        }
+    } else {
+        folderPath = data.path
+    }
+
+    const command = process.platform === 'win32'
+        ? `start "" "${folderPath}"`
+        : process.platform === 'darwin'
+            ? `open "${folderPath}"`
+            : `xdg-open "${folderPath}"`;
+
+    exec(command);
+})
 
 ipcMain.on('select-path-directory', async (event, data) => {
     await openFolderDialog('select-html-path')
@@ -240,7 +265,8 @@ ipcMain.on('play-button-clicked', (event, data) => {
             })
 
             launch_json.on('error', err => {
-                console.error = () => {}
+                console.error = () => {
+                }
             })
         }
 

@@ -30,6 +30,16 @@ document.getElementById('game-directory-default').addEventListener('click', () =
     document.getElementById('game-directory').value = ''
 })
 
+document.getElementById('game-directory-open').addEventListener('click', () => {
+    const path = document.getElementById('game-directory').value
+    if (window.electron) {
+        window.electron.openToPath('open-path-directory', {path: path})
+    } else {
+        console.error("window.electron is undefined")
+    }
+    console.log("Select game directory clicked")
+})
+
 document.getElementById('java-path-select').addEventListener('click', () => {
     if (window.electron) {
         window.electron.sendToJava('select-path-java', {})
