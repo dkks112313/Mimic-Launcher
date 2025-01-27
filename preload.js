@@ -31,7 +31,7 @@ contextBridge.exposeInMainWorld('electron', {
 })
 
 contextBridge.exposeInMainWorld('electronAPI', {
-    onData: (callback) => ipcRenderer.on('data-from-node', callback), // Подключаем обработчик событий
+    onData: (callback) => ipcRenderer.on('config-load', callback),
     onPathDirectory: (callback) => ipcRenderer.on('select-html-path', callback),
     onPathJava: (callback) => ipcRenderer.on('select-html-java-path', callback)
 });

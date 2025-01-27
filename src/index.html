@@ -111,7 +111,7 @@
                             <label><input id="alpha-versions" type="checkbox"> <span data-translate="showAlphaVersions">Show Alpha Versions</span></label>
                         </div>
                     </div>
-                    <button data-translate="saveSettings" id="save-settings">Save Settings</button>
+                    <!--<button data-translate="saveSettings" id="save-settings">Save Settings</button>-->
                 </div>
             </div>
         </div>
@@ -160,9 +160,9 @@
         memoryInput.value = value;
     });
 
-    document.getElementById("save-settings").addEventListener("click", () => {
+    /*document.getElementById("save-settings").addEventListener("click", () => {
         console.log("Save settings clicked");
-    });
+    });*/
 
     function updateLanguage(lang) {
         document.querySelectorAll('[data-translate]').forEach(element => {

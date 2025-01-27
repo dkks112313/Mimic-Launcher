@@ -9,7 +9,7 @@ const path = require("path")
 const fs = require("fs")
 const {downloadJava} = require("./java-downloader/Java")
 
-dialog.showErrorBox = () => {};
+dialog.showErrorBox = () => {}
 
 let win
 
@@ -27,8 +27,16 @@ const createWindow = () => {
     win.loadFile('src/index.html')
     win.setMenuBarVisibility(false)
 
-    win.webContents.send('data-from-node', {message: 'Hi, HTML!'})
+    win.webContents.send('config-load', {message: 'Hi, HTML!'})
 }
+
+app.whenReady().then(() => {
+    createWindow()
+})
+
+app.on('before-quit', (event) => {
+    console.log('App exit...')
+})
 
 async function openFolderDialog(channel) {
     let selected_dir
@@ -50,10 +58,6 @@ async function openFolderDialog(channel) {
             win.webContents.send(channel, {path: selected_dir})
         })
 }
-
-app.whenReady().then(() => {
-    createWindow()
-})
 
 ipcMain.on('select-path-directory', async (event, data) => {
     await openFolderDialog('select-html-path')
@@ -236,7 +240,7 @@ ipcMain.on('play-button-clicked', (event, data) => {
             })
 
             launch_json.on('error', err => {
-                console.error = () => {};
+                console.error = () => {}
             })
         }
 
