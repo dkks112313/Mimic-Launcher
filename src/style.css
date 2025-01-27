@@ -69,21 +69,34 @@ body {
 
 .page {
     display: none;
+    width: 100%;
 }
 
 .page.active {
     display: block;
 }
 
-.page-content {
-    max-width: 600px;
+.page-content-main {
+    max-width: 700px;
     margin: 0 auto;
+    width: 100%;
+}
+
+.page-content-settings {
+    max-width: 1200px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+.page-content-mods {
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
 }
 
 .pixel-title {
     font-family: "Press Start 2P", cursive;
-    /*font-family: "Minecraft", cursive;*/
-    font-size: 2rem;
+    font-size: 2.5rem;
     text-align: center;
     margin-bottom: 2rem;
     color: var(--accent-color);
@@ -95,10 +108,23 @@ body {
     border-radius: 10px;
     padding: 2rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: grid;
+    gap: 20px;
 }
 
 .option-group {
-    margin-bottom: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.option-group.full-width {
+    grid-column: 1 / -1;
+}
+
+.option-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
 label {
@@ -109,6 +135,7 @@ label {
 
 input[type="text"],
 input[type="range"],
+input[type="number"],
 select {
     width: 100%;
     padding: 0.5rem;
@@ -183,4 +210,37 @@ button:hover {
     .content {
         padding: 1rem;
     }
+    .option-row {
+        grid-template-columns: 1fr;
+    }
+    .input-with-buttons {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .input-with-buttons button {
+        width: 100%;
+        margin-top: 5px;
+    }
+}
+
+#save-settings {
+    grid-column: 1 / -1;
+    justify-self: center;
+    margin-top: 20px;
+}
+
+.input-with-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.input-with-buttons input[type="text"] {
+    flex-grow: 1;
+}
+
+.input-with-buttons button {
+    flex-shrink: 0;
+    width: auto;
+    padding: 0.5rem 1rem;
 }

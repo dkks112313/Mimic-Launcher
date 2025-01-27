@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain} = require("electron")
+const {app, BrowserWindow, ipcMain, dialog} = require("electron")
 const ProgressBar = require("electron-progressbar")
 
 const {Client, Authenticator} = require("minecraft-launcher-core")
@@ -9,8 +9,12 @@ const path = require("path")
 const fs = require("fs")
 const {downloadJava} = require("./java-downloader/Java")
 
+dialog.showErrorBox = () => {};
+
+let win
+
 const createWindow = () => {
-    const win = new BrowserWindow({
+    win = new BrowserWindow({
         width: 1200,
         height: 800,
         webPreferences: {
@@ -23,19 +27,70 @@ const createWindow = () => {
     win.loadFile('src/index.html')
     win.setMenuBarVisibility(false)
 
-    win.webContents.send('data-from-node', { message: 'Hi, HTML!' });
+    win.webContents.send('data-from-node', {message: 'Hi, HTML!'})
+}
+
+async function openFolderDialog(channel) {
+    let selected_dir
+
+    await dialog
+        .showOpenDialog(win, {
+            title: 'Choice path',
+            properties: ['openDirectory'],
+        })
+        .then((result) => {
+            if (!result.canceled) {
+                selected_dir = result.filePaths[0]
+            }
+        })
+        .catch((err) => {
+            console.error('Ошибка при открытии диалога:', err)
+        })
+        .finally((err) => {
+            win.webContents.send(channel, {path: selected_dir})
+        })
 }
 
 app.whenReady().then(() => {
     createWindow()
 })
 
-ipcMain.on('play-button-clicked', (event, data) => {
-    const pathToDir = path.resolve('./Minecraft')
-    const folderPath = path.join(pathToDir)
+ipcMain.on('select-path-directory', async (event, data) => {
+    await openFolderDialog('select-html-path')
+})
 
-    if (!fs.existsSync(folderPath)) {
-        fs.mkdirSync(folderPath)
+ipcMain.on('select-path-java', async (event, data) => {
+    await openFolderDialog('select-html-java-path')
+})
+
+ipcMain.on('play-button-clicked', (event, data) => {
+    const params = {
+        name: data.name,
+        version: data.version,
+        mode: data.selectedMode,
+        ram: data.ram,
+        path: data.pathDirectory,
+        java: data.javaPaths
+    }
+
+    const launch_toml = new Client()
+    const launch_json = new Launch()
+
+    let pathToDir, folderPath, pathJava
+    if (params['path'] === undefined || params['path'] === '') {
+        pathToDir = path.resolve('./Minecraft')
+        folderPath = path.join(pathToDir)
+
+        if (!fs.existsSync(folderPath)) {
+            fs.mkdirSync(folderPath)
+        }
+    } else {
+        pathToDir = params['path']
+        folderPath = path.join(pathToDir)
+    }
+
+    if (params['java'] === undefined || params['java'] === '') {
+        params['java'] = null
     }
 
     let progressBar = new ProgressBar({
@@ -50,10 +105,10 @@ ipcMain.on('play-button-clicked', (event, data) => {
                 'color': '#ffffff'
             },
             bar: {
-                'background': '#24c8db'
+                'background': '#4caf50'
             },
             value: {
-                'background': '#3F51B5'
+                'background': '#23631e'
             }
         },
         browserWindow: {
@@ -71,16 +126,6 @@ ipcMain.on('play-button-clicked', (event, data) => {
             console.info(`aborted...`)
         })
 
-    const params = {
-        name: data.name,
-        version: data.version,
-        mode: data.selectedMode,
-        ram: data.ram
-    }
-
-    const launch_toml = new Client()
-    const launch_json = new Launch()
-
     function find_jre() {
         const path_jre = `${path.join(folderPath, 'runtime')}`
         if (!fs.existsSync(path_jre)) {
@@ -95,7 +140,7 @@ ipcMain.on('play-button-clicked', (event, data) => {
             }
         }
 
-        return '';
+        return ''
     }
 
     async function launchTask(progressBar) {
@@ -105,6 +150,12 @@ ipcMain.on('play-button-clicked', (event, data) => {
         if (params['mode'] !== 'Vanilla') {
             mode = params['mode'].toLowerCase()
             enables = true
+        }
+
+        if (params['java'] === null) {
+            params['java'] = null
+        } else {
+            params['java'] = path.join(params['java'], 'bin', 'java')
         }
 
         let option = {
@@ -120,7 +171,7 @@ ipcMain.on('play-button-clicked', (event, data) => {
             JVM_ARGS: [],
             GAME_ARGS: [],
             java: {
-                path: null,
+                path: params['java'],
                 version: null,
                 type: 'jre',
             },
@@ -182,19 +233,19 @@ ipcMain.on('play-button-clicked', (event, data) => {
             launch_json.on('close', code => {
                 progressBar.setCompleted()
                 console.log(code)
-            });
+            })
 
             launch_json.on('error', err => {
-                console.log(err)
+                console.error = () => {};
             })
         }
 
         async function task() {
             if (find_jre() === '') {
-                await downloadJava();
+                await downloadJava(folderPath)
             }
 
-            const version = path.join(folderPath, 'versions', params['version']);
+            const version = path.join(folderPath, 'versions', params['version'])
 
             if (fs.existsSync(version)) {
                 fs.rm(version, {recursive: true}, (err) => {
@@ -204,12 +255,19 @@ ipcMain.on('play-button-clicked', (event, data) => {
 
             forge.getMCLCLaunchConfig({
                 gameVersion: params['version'],
-                rootPath: './Minecraft',
+                rootPath: folderPath,
             })
+
+            let pathToJavas
+            if (params['java'] === null) {
+                pathToJavas = path.join(folderPath, 'runtime', find_jre(), 'bin', 'java')
+            } else {
+                pathToJavas = params['java']
+            }
 
             await launch_toml.launch({
                 authorization: Authenticator.getAuth(params['name']),
-                root: `${folderPath}`,
+                root: folderPath,
                 version: {
                     number: params['version'],
                     type: 'release'
@@ -224,8 +282,8 @@ ipcMain.on('play-button-clicked', (event, data) => {
                 fw: {
                     version: '1.6.0'
                 },
-                forge: `./Minecraft/versions/forge-${params['version']}/forge.jar`,
-                javaPath: path.resolve(`${path.join(folderPath, 'runtime', find_jre(), 'bin', 'java')}`),
+                forge: path.join(folderPath, 'versions', 'forge-1.16.5', 'forge.jar'),
+                javaPath: pathToJavas,
                 customArgs: ['-Dminecraft.api.env=custom',
                     '-Dminecraft.api.auth.host=https://invalid.invalid/',
                     '-Dminecraft.api.account.host=https://invalid.invalid/',
@@ -245,9 +303,9 @@ ipcMain.on('play-button-clicked', (event, data) => {
         }
 
         if (['1.16.5', '1.16.4', '1.16.3', '1.16.2', '1.16.1', '1.15.2'].includes(params['version']) && params['mode'] === 'Forge') {
-            await task();
+            await task()
         } else {
-            await extracted();
+            await extracted()
         }
     }
 

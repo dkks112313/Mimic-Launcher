@@ -5,6 +5,7 @@
   "license": "MIT",
   "main": "index.js",
   "scripts": {
+    "test": "node test.js",
     "start": "electron index.js",
     "build-windows":  "electron-packager ./ Mimic --platform=win32 --arch=x64",
     "build-mac": "electron-packager ./ Mimic --platform=darwin --arch=x64",

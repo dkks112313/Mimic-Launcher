@@ -9,8 +9,18 @@
 
     <script>
         window.electronAPI.onData((event, data) => {
-            console.log('Данные из Node:', data.message);
-        });
+            console.log('Данные из Node:', data.message)
+        })
+
+        window.electronAPI.onPathDirectory((event, data) => {
+            if(data.path !== undefined)
+                document.getElementById('game-directory').value = data.path
+        })
+
+        window.electronAPI.onPathJava((event, data) => {
+            if(data.path !== undefined)
+                document.getElementById('java-path').value = data.path
+        })
     </script>
 </head>
 <body>
@@ -24,19 +34,20 @@
     </nav>
     <main class="content">
         <div class="page active" id="home">
-            <div class="page-content">
-                <h1 class="pixel-title" id="innder">Welcome to Mimic Launcher</h1>
+            <div class="page-content-main">
+                <h1 class="pixel-title" data-translate="welcomeTitle">Welcome to Mimic Launcher</h1>
                 <div class="launcher-options">
                     <div class="option-group">
-                        <label for="username">Username:</label>
-                        <input id="username" placeholder="Enter your Minecraft username" type="text">
+                        <label data-translate="username" for="username">Username:</label>
+                        <input data-translate-placeholder="usernamePlaceholder" id="username"
+                               placeholder="Enter your Minecraft username" type="text">
                     </div>
                     <div class="option-group">
-                        <label for="version">Game Version:</label>
+                        <label data-translate="gameVersion" for="version">Game Version:</label>
                         <select id="version"></select>
                     </div>
                     <div class="option-group">
-                        <label for="modloader">Mod Loader:</label>
+                        <label data-translate="modLoader" for="modloader">Mod Loader:</label>
                         <select id="modloader" onchange="changeFunction()">
                             <option value="vanilla">Vanilla</option>
                             <option value="forge">Forge</option>
@@ -45,44 +56,78 @@
                             <option value="neoforge">NeoForge</option>
                         </select>
                     </div>
-                    <button id="launch-btn">Launch Game</button>
+                    <button data-translate="launchGame" id="launch-btn">Launch Game</button>
                 </div>
                 <div id="status-message"></div>
             </div>
         </div>
         <div class="page" id="settings">
-            <div class="page-content">
-                <h1 class="pixel-title">Settings</h1>
+            <div class="page-content-settings">
+                <h1 class="pixel-title" data-translate="settings">Settings</h1>
                 <div class="launcher-options">
-                    <div class="option-group">
-                        <label for="memory">Memory Allocation:</label>
-                        <input id="memory" max="16" min="1" type="range" value="4">
-                        <span id="memory-value">4 GB</span>
+                    <div class="option-group full-width">
+                        <label data-translate="gameDirectory" for="game-directory">Game Directory:</label>
+                        <div class="input-with-buttons">
+                            <input data-translate-placeholder="gameDirectoryPlaceholder" id="game-directory"
+                                   placeholder="Enter game directory" type="text">
+                            <button data-translate="selectPathButton" id="game-directory-select">Select Path</button>
+                            <button data-translate="defaultButton" id="game-directory-default">Default</button>
+                        </div>
                     </div>
-                    <div class="option-group">
-                        <label for="java-path">Java Path:</label>
-                        <input id="java-path" placeholder="Enter Java path" type="text">
+                    <div class="option-group full-width">
+                        <label data-translate="javaPath" for="java-path">Java Path:</label>
+                        <div class="input-with-buttons">
+                            <input data-translate-placeholder="javaPathPlaceholder" id="java-path"
+                                   placeholder="Enter Java path" type="text">
+                            <button data-translate="selectPathButton" id="java-path-select">Select Path</button>
+                            <button data-translate="defaultButton" id="java-path-default">Default</button>
+                        </div>
                     </div>
-                    <div class="option-group">
-                        <label for="game-directory">Game Directory:</label>
-                        <input id="game-directory" placeholder="Enter game directory" type="text">
+                    <div class="option-row">
+                        <div class="option-group">
+                            <label data-translate="memoryAllocation" for="memory-input">Memory Allocation (GB):</label>
+                            <input id="memory-input" max="16" min="1" type="number" value="4">
+                            <input id="memory" max="16" min="1" type="range" value="4">
+                            <span id="memory-value">4 GB</span>
+                        </div>
+                        <div class="option-group">
+                            <label data-translate="jvmArguments" for="jvm-arguments">JVM Arguments:</label>
+                            <input data-translate-placeholder="jvmArgumentsPlaceholder" id="jvm-arguments"
+                                   placeholder="Enter JVM arguments" type="text">
+                        </div>
                     </div>
-                    <button id="save-settings">Save Settings</button>
+                    <div class="option-row">
+                        <div class="option-group">
+                            <label data-translate="language" for="language-select">Language:</label>
+                            <select id="language-select">
+                                <option value="en">English</option>
+                                <option value="ru">Русский</option>
+                                <option value="de">Deutsch</option>
+                                <option value="fr">Français</option>
+                            </select>
+                        </div>
+                        <div class="option-group">
+                            <label><input id="auto-updates" type="checkbox"> <span data-translate="enableAutoUpdates">Enable Auto Updates</span></label>
+                            <label><input id="alpha-versions" type="checkbox"> <span data-translate="showAlphaVersions">Show Alpha Versions</span></label>
+                        </div>
+                    </div>
+                    <button data-translate="saveSettings" id="save-settings">Save Settings</button>
                 </div>
             </div>
         </div>
         <div class="page" id="mods">
-            <div class="page-content">
-                <h1 class="pixel-title">Mods</h1>
+            <div class="page-content-mods">
+                <h1 class="pixel-title" data-translate="mods">Mods</h1>
                 <div class="launcher-options">
                     <div class="option-group">
-                        <label for="mod-search">Search Mods:</label>
-                        <input id="mod-search" placeholder="Search for mods" type="text">
+                        <label data-translate="searchMods" for="mod-search">Search Mods:</label>
+                        <input data-translate-placeholder="searchModsPlaceholder" id="mod-search"
+                               placeholder="Search for mods" type="text">
                     </div>
                     <div id="mod-list">
                         <!-- Mod list will be populated dynamically -->
                     </div>
-                    <button id="install-mods">Install Selected Mods</button>
+                    <button data-translate="installMods" id="install-mods">Install Selected Mods</button>
                 </div>
             </div>
         </div>
@@ -91,22 +136,52 @@
 <script src="render.js"></script>
 <script src="version.js"></script>
 <script src="navigation.js"></script>
+<script src="language.js"></script>
 <script>
-    // Ждём полной загрузки DOM
-    document.addEventListener("DOMContentLoaded", () => {
-        // Получаем элементы ползунка и отображения значения памяти
-        const memorySlider = document.getElementById("memory");
-        const memoryValue = document.getElementById("memory-value");
+    const memorySlider = document.getElementById("memory");
+    const memoryValue = document.getElementById("memory-value");
+    const memoryInput = document.getElementById("memory-input");
+    const languageSelect = document.getElementById("language-select");
 
-        // Устанавливаем начальное значение
-        memoryValue.textContent = `${memorySlider.value} GB`;
+    memoryValue.textContent = `${memorySlider.value} GB`;
+    memoryInput.value = memorySlider.value;
 
-        // Добавляем обработчик события для ползунка
-        memorySlider.addEventListener("input", () => {
-            // Обновляем текстовое значение
-            memoryValue.textContent = `${memorySlider.value} GB`;
-        });
+    memoryInput.addEventListener("input", () => {
+        const value = parseInt(memoryInput.value);
+        if (value >= 1 && value <= 16) {
+            memorySlider.value = value;
+            memoryValue.textContent = `${value} GB`;
+        }
     });
+
+    memorySlider.addEventListener("input", () => {
+        const value = memorySlider.value;
+        memoryValue.textContent = `${value} GB`;
+        memoryInput.value = value;
+    });
+
+    document.getElementById("save-settings").addEventListener("click", () => {
+        console.log("Save settings clicked");
+    });
+
+    function updateLanguage(lang) {
+        document.querySelectorAll('[data-translate]').forEach(element => {
+            const key = element.getAttribute('data-translate');
+            element.textContent = translations[lang][key];
+        });
+
+        document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-translate-placeholder');
+            element.placeholder = translations[lang][key];
+        });
+    }
+
+    languageSelect.addEventListener('change', (event) => {
+        const selectedLanguage = event.target.value;
+        updateLanguage(selectedLanguage);
+    });
+
+    updateLanguage('en');
 </script>
 </body>
 </html>
