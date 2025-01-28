@@ -30,11 +30,28 @@ contextBridge.exposeInMainWorld('electron', {
         if (validChannels.includes(channel)) {
             ipcRenderer.send(channel, data)
         }
+    },
+    sendDefaultPath: (channel, data) => {
+        const validChannels = ['select-default-directory'];
+        if (validChannels.includes(channel)) {
+            ipcRenderer.send(channel, data)
+        }
+    },
+    sendDefaultJava: (channel, data) => {
+        const validChannels = ['select-default-java'];
+        if (validChannels.includes(channel)) {
+            ipcRenderer.send(channel, data)
+        }
     }
 })
 
 contextBridge.exposeInMainWorld('electronAPI', {
     onData: (callback) => ipcRenderer.on('config-load', callback),
     onPathDirectory: (callback) => ipcRenderer.on('select-html-path', callback),
-    onPathJava: (callback) => ipcRenderer.on('select-html-java-path', callback)
+    onPathJava: (callback) => ipcRenderer.on('select-html-java-path', callback),
+    onDefaultPath: (callback) => ipcRenderer.on('select-default-html-path', callback),
+    onDefaultJava: (callback) => ipcRenderer.on('select-default-html-java', callback),
+    openToPathDefault: (callback) => ipcRenderer.on('select-html-java-path', callback),
+    onConfigLoad: (callback) => ipcRenderer.on("config-load", (event, data) => callback(data)),
+    sendSaveConfig: (updatedConfig) => ipcRenderer.send("update-config", updatedConfig),
 });

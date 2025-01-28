@@ -8,12 +8,65 @@ const {forge} = require("tomate-loaders")
 const path = require("path")
 const fs = require("fs")
 const {exec} = require("child_process")
+const ini = require("ini")
 const {downloadJava} = require("./java-downloader/Java")
 
 dialog.showErrorBox = () => {
 }
 
+const configPath = path.join(__dirname, "config.ini");
+
 let win
+const defaultConfig = {
+    core: {
+        name: "username",
+        version: "1.21.4",
+        mode: "vanilla",
+        ram: "4",
+        path: "",
+        java: "",
+        jvm: "",
+        language: "en",
+        update: true,
+        alpha: true,
+    }
+};
+let currentConfig = {};
+
+function loadConfig() {
+    if (fs.existsSync(configPath)) {
+        const fileData = fs.readFileSync(configPath, "utf-8");
+        const config = ini.parse(fileData);
+
+        let updated = false;
+        for (const key in defaultConfig.core) {
+            if (!(key in config.core)) {
+                config.core[key] = defaultConfig.core[key];
+                updated = true;
+            }
+        }
+
+        if (updated) {
+            fs.writeFileSync(configPath, ini.stringify(config));
+        }
+
+        return config;
+    } else {
+        fs.writeFileSync(configPath, ini.stringify(defaultConfig));
+        return defaultConfig;
+    }
+}
+
+function updateConfig(updatedConfig) {
+    currentConfig = {
+        ...currentConfig,
+        core: { ...currentConfig.core, ...updatedConfig }
+    };
+
+    // Сохраняем изменения в файл
+    fs.writeFileSync(configPath, ini.stringify(currentConfig));
+    console.log("Config updated and saved.");
+}
 
 const createWindow = () => {
     win = new BrowserWindow({
@@ -30,16 +83,19 @@ const createWindow = () => {
     win.loadFile('src/index.html')
     win.setMenuBarVisibility(false)
 
-    win.webContents.send('config-load', {message: 'Hi, HTML!'})
+    currentConfig = loadConfig();
+    win.webContents.on("did-finish-load", () => {
+        win.webContents.send("config-load", currentConfig);
+    });
 }
 
 app.whenReady().then(() => {
     createWindow()
 })
 
-app.on('before-quit', (event) => {
-    console.log('App exit...')
-})
+app.on("before-quit", async (event) => {
+    console.log("App is exiting...");
+});
 
 async function openFolderDialog(channel) {
     let selected_dir
@@ -62,6 +118,10 @@ async function openFolderDialog(channel) {
         })
 }
 
+ipcMain.on('update-config', (event, updatedConfig) => {
+    updateConfig(updatedConfig); // Обновляем конфиг
+});
+
 ipcMain.on('open-path-directory', async (event, data) => {
     let folderPath
 
@@ -82,6 +142,14 @@ ipcMain.on('open-path-directory', async (event, data) => {
             : `xdg-open "${folderPath}"`;
 
     exec(command);
+})
+
+ipcMain.on('select-default-directory', async (event, data) => {
+    win.webContents.send('select-default-html-path', {path: ''})
+})
+
+ipcMain.on('select-default-java', async (event, data) => {
+    win.webContents.send('select-default-html-java', {path: ''})
 })
 
 ipcMain.on('select-path-directory', async (event, data) => {
@@ -322,10 +390,10 @@ ipcMain.on('play-button-clicked', (event, data) => {
             }
 
             let jvm = params['jvm'].concat(['-Dminecraft.api.env=custom',
-                    '-Dminecraft.api.auth.host=https://invalid.invalid/',
-                    '-Dminecraft.api.account.host=https://invalid.invalid/',
-                    '-Dminecraft.api.session.host=https://invalid.invalid/',
-                    '-Dminecraft.api.services.host=https://invalid.invalid/'])
+                '-Dminecraft.api.auth.host=https://invalid.invalid/',
+                '-Dminecraft.api.account.host=https://invalid.invalid/',
+                '-Dminecraft.api.session.host=https://invalid.invalid/',
+                '-Dminecraft.api.services.host=https://invalid.invalid/'])
 
             await launch_toml.launch({
                 authorization: Authenticator.getAuth(params['name']),

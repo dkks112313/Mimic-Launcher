@@ -106,3 +106,24 @@ const translations = {
         installMods: "Installer les mods sélectionnés",
     },
 }
+
+function updateLanguage(lang) {
+    document.querySelectorAll('[data-translate]').forEach(element => {
+        const key = element.getAttribute('data-translate');
+        if (translations[lang] && translations[lang][key]) {
+            element.textContent = translations[lang][key];
+        }
+    });
+
+    document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
+        const key = element.getAttribute('data-translate-placeholder');
+        if (translations[lang] && translations[lang][key]) {
+            element.placeholder = translations[lang][key];
+        }
+    });
+}
+
+document.getElementById('language-select').addEventListener('change', (event) => {
+    const selectedLanguage = event.target.value;
+    updateLanguage(selectedLanguage);
+});

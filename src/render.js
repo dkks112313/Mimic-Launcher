@@ -28,13 +28,18 @@ document.getElementById('game-directory-select').addEventListener('click', () =>
 })
 
 document.getElementById('game-directory-default').addEventListener('click', () => {
+    if (window.electron) {
+        window.electron.sendDefaultPath('select-default-directory', {})
+    } else {
+        console.error("window.electron is undefined")
+    }
     document.getElementById('game-directory').value = ''
 })
 
 document.getElementById('game-directory-open').addEventListener('click', () => {
     const path = document.getElementById('game-directory').value
     if (window.electron) {
-        window.electron.openToPath('open-path-directory', {path: path})
+        window.electron.openToPathDefault('open-path-directory', {path: path})
     } else {
         console.error("window.electron is undefined")
     }
@@ -51,6 +56,11 @@ document.getElementById('java-path-select').addEventListener('click', () => {
 })
 
 document.getElementById('java-path-default').addEventListener('click', () => {
+    if (window.electron) {
+        window.electron.sendDefaultJava('select-default-java', {})
+    } else {
+        console.error("window.electron is undefined")
+    }
     document.getElementById('java-path').value = ''
 })
 

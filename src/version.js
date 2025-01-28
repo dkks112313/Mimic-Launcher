@@ -4,7 +4,7 @@
 // NEOFORGE - https://maven.neoforged.net/mojang-meta/net/neoforged/minecraft-dependencies/maven-metadata.xml
 const version_list = document.getElementById('version');
 
-fetch('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json')
+/*fetch('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json')
     .then(r => r.json())
     .then(names => {
         let namesContains = names['versions'];
@@ -12,7 +12,7 @@ fetch('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json')
             let newOption = new Option(namesContains[i]['id'], namesContains[i]['type']);
             version_list.append(newOption);
         }
-    });
+    });*/
 
 function removeSelectedOptions() {
     let selectElement = document.getElementById("version");

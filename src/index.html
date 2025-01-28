@@ -8,19 +8,60 @@
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
 
     <script>
+        function updateConfigField(field, value) {
+            const updatedConfig = {
+                [field]: value
+            };
+            window.electronAPI.sendSaveConfig(updatedConfig);
+        }
+
+        window.electronAPI.onDefaultPath((event, data) => {
+            updateConfigField('path', data.path);
+        })
+
+        window.electronAPI.onDefaultJava((event, data) => {
+            updateConfigField('java', data.path);
+        })
+
         window.electronAPI.onData((event, data) => {
             console.log('Данные из Node:', data.message)
         })
 
         window.electronAPI.onPathDirectory((event, data) => {
-            if(data.path !== undefined)
+            if(data.path !== undefined) {
                 document.getElementById('game-directory').value = data.path
+                updateConfigField('path', data.path);
+            }
         })
 
         window.electronAPI.onPathJava((event, data) => {
-            if(data.path !== undefined)
+            if(data.path !== undefined) {
                 document.getElementById('java-path').value = data.path
+                updateConfigField('java', data.path);
+            }
         })
+
+        window.electronAPI.onConfigLoad((config) => {
+            document.getElementById("username").value = config.core.name;
+            document.getElementById("modloader").value = config.core.mode;
+
+            document.getElementById("version").value = config.core.version;
+            changeFunction();
+
+            document.getElementById("memory-input").value = config.core.ram;
+            document.getElementById("memory").value = config.core.ram;
+            document.getElementById("memory-value").textContent = config.core.ram + ' GB';
+
+            document.getElementById("game-directory").value = config.core.path;
+            document.getElementById("java-path").value = config.core.java;
+            document.getElementById("jvm-arguments").value = config.core.jvm;
+
+            document.getElementById("language-select").value = config.core.language;
+            updateLanguage(config.core.language);
+
+            document.getElementById("auto-updates").checked = config.core.update;
+            document.getElementById("alpha-versions").checked = config.core.alpha;
+        });
     </script>
 </head>
 <body>
@@ -138,51 +179,59 @@
 <script src="version.js"></script>
 <script src="navigation.js"></script>
 <script src="language.js"></script>
+<script src="memory.js"></script>
 <script>
-    const memorySlider = document.getElementById("memory");
-    const memoryValue = document.getElementById("memory-value");
-    const memoryInput = document.getElementById("memory-input");
-    const languageSelect = document.getElementById("language-select");
-
-    memoryValue.textContent = `${memorySlider.value} GB`;
-    memoryInput.value = memorySlider.value;
-
-    memoryInput.addEventListener("input", () => {
-        const value = parseInt(memoryInput.value);
-        if (value >= 1 && value <= 16) {
-            memorySlider.value = value;
-            memoryValue.textContent = `${value} GB`;
-        }
-    });
-
-    memorySlider.addEventListener("input", () => {
-        const value = memorySlider.value;
-        memoryValue.textContent = `${value} GB`;
-        memoryInput.value = value;
-    });
-
-    /*document.getElementById("save-settings").addEventListener("click", () => {
-        console.log("Save settings clicked");
-    });*/
-
-    function updateLanguage(lang) {
-        document.querySelectorAll('[data-translate]').forEach(element => {
-            const key = element.getAttribute('data-translate');
-            element.textContent = translations[lang][key];
-        });
-
-        document.querySelectorAll('[data-translate-placeholder]').forEach(element => {
-            const key = element.getAttribute('data-translate-placeholder');
-            element.placeholder = translations[lang][key];
-        });
+    function updateConfigField(field, value) {
+        const updatedConfig = {
+            [field]: value
+        };
+        window.electronAPI.sendSaveConfig(updatedConfig);
     }
 
-    languageSelect.addEventListener('change', (event) => {
-        const selectedLanguage = event.target.value;
-        updateLanguage(selectedLanguage);
+    // Обработчики для различных элементов формы
+    document.getElementById('username').addEventListener('input', (event) => {
+        updateConfigField('name', event.target.value);
     });
 
-    updateLanguage('en');
+    document.getElementById('version').addEventListener('change', (event) => {
+        updateConfigField('version', event.target.value);
+    });
+
+    document.getElementById('modloader').addEventListener('change', (event) => {
+        updateConfigField('mode', event.target.value);
+    });
+
+    document.getElementById('memory-input').addEventListener('input', (event) => {
+        updateConfigField('ram', event.target.value);
+    });
+
+    document.getElementById('memory').addEventListener('input', (event) => {
+        updateConfigField('ram', event.target.value);
+    });
+
+    document.getElementById('game-directory').addEventListener('input', (event) => {
+        updateConfigField('path', event.target.value);
+    });
+
+    document.getElementById('java-path').addEventListener('input', (event) => {
+        updateConfigField('java', event.target.value);
+    });
+
+    document.getElementById('jvm-arguments').addEventListener('input', (event) => {
+        updateConfigField('jvm', event.target.value);
+    });
+
+    document.getElementById('language-select').addEventListener('change', (event) => {
+        updateConfigField('language', event.target.value);
+    });
+
+    document.getElementById('auto-updates').addEventListener('change', (event) => {
+        updateConfigField('update', event.target.checked);
+    });
+
+    document.getElementById('alpha-versions').addEventListener('change', (event) => {
+        updateConfigField('alpha', event.target.checked);
+    });
 </script>
 </body>
 </html>
