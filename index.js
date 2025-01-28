@@ -60,7 +60,7 @@ function loadConfig() {
 function updateConfig(updatedConfig) {
     currentConfig = {
         ...currentConfig,
-        core: { ...currentConfig.core, ...updatedConfig }
+        core: {...currentConfig.core, ...updatedConfig}
     };
 
     // Сохраняем изменения в файл

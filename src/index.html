@@ -45,9 +45,6 @@
             document.getElementById("username").value = config.core.name;
             document.getElementById("modloader").value = config.core.mode;
 
-            document.getElementById("version").value = config.core.version;
-            changeFunction();
-
             document.getElementById("memory-input").value = config.core.ram;
             document.getElementById("memory").value = config.core.ram;
             document.getElementById("memory-value").textContent = config.core.ram + ' GB';
@@ -61,6 +58,8 @@
 
             document.getElementById("auto-updates").checked = config.core.update;
             document.getElementById("alpha-versions").checked = config.core.alpha;
+
+            changeFunction(config.core.version);
         });
     </script>
 </head>
@@ -188,17 +187,17 @@
         window.electronAPI.sendSaveConfig(updatedConfig);
     }
 
-    // Обработчики для различных элементов формы
     document.getElementById('username').addEventListener('input', (event) => {
         updateConfigField('name', event.target.value);
     });
 
     document.getElementById('version').addEventListener('change', (event) => {
-        updateConfigField('version', event.target.value);
+        updateConfigField('version', document.getElementById('version').options[document.getElementById('version').selectedIndex].text);
     });
 
     document.getElementById('modloader').addEventListener('change', (event) => {
         updateConfigField('mode', event.target.value);
+        updateConfigField('version', 'latest');
     });
 
     document.getElementById('memory-input').addEventListener('input', (event) => {

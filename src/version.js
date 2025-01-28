@@ -4,16 +4,6 @@
 // NEOFORGE - https://maven.neoforged.net/mojang-meta/net/neoforged/minecraft-dependencies/maven-metadata.xml
 const version_list = document.getElementById('version');
 
-/*fetch('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json')
-    .then(r => r.json())
-    .then(names => {
-        let namesContains = names['versions'];
-        for (let i = 0; i < namesContains.length; i++) {
-            let newOption = new Option(namesContains[i]['id'], namesContains[i]['type']);
-            version_list.append(newOption);
-        }
-    });*/
-
 function removeSelectedOptions() {
     let selectElement = document.getElementById("version");
     let options = selectElement.options;
@@ -23,7 +13,7 @@ function removeSelectedOptions() {
     }
 }
 
-function changeFunction() {
+function changeFunction(vers = 0) {
     removeSelectedOptions()
 
     switch (document.getElementById('modloader').options[document.getElementById('modloader').selectedIndex].text) {
@@ -33,8 +23,14 @@ function changeFunction() {
                 .then(names => {
                     let namesContains = names['versions'];
                     for (let i = 0; i < namesContains.length; i++) {
-                        let newOption = new Option(namesContains[i]['id'], namesContains[i]['type']);
+                        let newOption = new Option(namesContains[i]['id'], namesContains[i]['id']);
                         version_list.append(newOption);
+                    }
+                })
+                .then(result => {
+                    if (vers !== 0 && vers !== 'latest') {
+                        document.getElementById("version").value = vers;
+                        console.log(vers)
                     }
                 });
             break;
@@ -55,6 +51,12 @@ function changeFunction() {
                         let newOption = new Option(version, version);
                         version_list.appendChild(newOption);
                     });
+                })
+                .then(result => {
+                    if (vers !== 0 && vers !== 'latest') {
+                        document.getElementById("version").value = vers;
+                        console.log(vers)
+                    }
                 });
             break;
         case 'Fabric':
@@ -62,8 +64,14 @@ function changeFunction() {
                 .then(response => response.json())
                 .then(names => {
                     for (let i = 0; i < names.length; i++) {
-                        let newOption = new Option(names[i]['version'], i);
+                        let newOption = new Option(names[i]['version'], names[i]['version']);
                         version_list.append(newOption);
+                    }
+                })
+                .then(result => {
+                    if (vers !== 0 && vers !== 'latest') {
+                        document.getElementById("version").value = vers;
+                        console.log(vers)
                     }
                 });
             break;
@@ -72,8 +80,14 @@ function changeFunction() {
                 .then(response => response.json())
                 .then(names => {
                     for (let i = 0; i < names.length; i++) {
-                        let newOption = new Option(names[i]['version'], i);
+                        let newOption = new Option(names[i]['version'], names[i]['version']);
                         version_list.append(newOption);
+                    }
+                })
+                .then(result => {
+                    if (vers !== 0 && vers !== 'latest') {
+                        document.getElementById("version").value = vers;
+                        console.log(vers)
                     }
                 });
             break;
@@ -122,6 +136,12 @@ function changeFunction() {
                         let newOption = new Option(version, version);
                         version_list.appendChild(newOption);
                     })
+                })
+                .then(result => {
+                    if (vers !== 0 && vers !== 'latest') {
+                        document.getElementById("version").value = vers;
+                        console.log(vers)
+                    }
                 });
             break;
     }
