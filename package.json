@@ -37,7 +37,6 @@
     "7zip-bin": "^5.2.0",
     "adm-zip": "^0.5.9",
     "electron-progressbar": "^2.2.1",
-    "electron-store": "^10.0.1",
     "ini": "^5.0.0",
     "minecraft-launcher-core": "^3.18.2",
     "node-7z": "^3.0.0",
