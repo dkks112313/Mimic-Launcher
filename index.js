@@ -82,6 +82,7 @@ const createWindow = () => {
 
     win.loadFile('src/index.html')
     win.setMenuBarVisibility(false)
+    win.webContents.openDevTools()
 
     currentConfig = loadConfig();
     win.webContents.on("did-finish-load", () => {
@@ -174,7 +175,7 @@ ipcMain.on('play-button-clicked', (event, data) => {
     const launch_toml = new Client()
     const launch_json = new Launch()
 
-    let pathToDir, folderPath, pathJava
+    let pathToDir, folderPath
     if (params['path'] === undefined || params['path'] === '') {
         pathToDir = path.resolve('./Minecraft')
         folderPath = path.join(pathToDir)

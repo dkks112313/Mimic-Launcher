@@ -42,6 +42,12 @@ contextBridge.exposeInMainWorld('electron', {
         if (validChannels.includes(channel)) {
             ipcRenderer.send(channel, data)
         }
+    },
+    openToPathDefault: (channel, data) => {
+        const validChannels = ['open-path-directory'];
+        if (validChannels.includes(channel)) {
+            ipcRenderer.send(channel, data)
+        }
     }
 })
 
@@ -51,7 +57,6 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onPathJava: (callback) => ipcRenderer.on('select-html-java-path', callback),
     onDefaultPath: (callback) => ipcRenderer.on('select-default-html-path', callback),
     onDefaultJava: (callback) => ipcRenderer.on('select-default-html-java', callback),
-    openToPathDefault: (callback) => ipcRenderer.on('select-html-java-path', callback),
     onConfigLoad: (callback) => ipcRenderer.on("config-load", (event, data) => callback(data)),
     sendSaveConfig: (updatedConfig) => ipcRenderer.send("update-config", updatedConfig),
 });
