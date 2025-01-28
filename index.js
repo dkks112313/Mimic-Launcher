@@ -82,7 +82,6 @@ const createWindow = () => {
 
     win.loadFile('src/index.html')
     win.setMenuBarVisibility(false)
-    win.webContents.openDevTools()
 
     currentConfig = loadConfig();
     win.webContents.on("did-finish-load", () => {
