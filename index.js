@@ -14,13 +14,13 @@ const {downloadJava} = require("./java-downloader/Java")
 dialog.showErrorBox = () => {
 }
 
-const configPath = path.join(__dirname, "config.ini");
+const configPath = path.join("./config.ini");
 
 let win
 const defaultConfig = {
     core: {
         name: "username",
-        version: "1.21.4",
+        version: "latest",
         mode: "vanilla",
         ram: "4",
         path: "",

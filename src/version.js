@@ -126,9 +126,3 @@ function changeFunction() {
             break;
     }
 }
-
-/*const greetForm = document.getElementById('greet-form');
-
-greetForm.addEventListener('submit', (event) => {
-    event.preventDefault();
-});*/
