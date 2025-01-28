@@ -1,73 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
     <title>Mimic Launcher</title>
     <link href="style.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-
-    <script>
-        function updateConfigField(field, value) {
-            const updatedConfig = {
-                [field]: value
-            };
-            window.electronAPI.sendSaveConfig(updatedConfig);
-        }
-
-        window.electronAPI.onDefaultPath((event, data) => {
-            updateConfigField('path', data.path);
-        })
-
-        window.electronAPI.onDefaultJava((event, data) => {
-            updateConfigField('java', data.path);
-        })
-
-        window.electronAPI.onData((event, data) => {
-            console.log('Данные из Node:', data.message)
-        })
-
-        window.electronAPI.onPathDirectory((event, data) => {
-            if(data.path !== undefined) {
-                document.getElementById('game-directory').value = data.path
-                updateConfigField('path', data.path);
-            }
-        })
-
-        window.electronAPI.onPathJava((event, data) => {
-            if(data.path !== undefined) {
-                document.getElementById('java-path').value = data.path
-                updateConfigField('java', data.path);
-            }
-        })
-
-        window.electronAPI.onConfigLoad((config) => {
-            document.getElementById("username").value = config.core.name;
-            document.getElementById("modloader").value = config.core.mode;
-
-            document.getElementById("memory-input").value = config.core.ram;
-            document.getElementById("memory").value = config.core.ram;
-            document.getElementById("memory-value").textContent = config.core.ram + ' GB';
-
-            document.getElementById("game-directory").value = config.core.path;
-            document.getElementById("java-path").value = config.core.java;
-            document.getElementById("jvm-arguments").value = config.core.jvm;
-
-            document.getElementById("language-select").value = config.core.language;
-            updateLanguage(config.core.language);
-
-            document.getElementById("auto-updates").checked = config.core.update;
-            document.getElementById("alpha-versions").checked = config.core.alpha;
-
-            changeFunction(config.core.version);
-        });
-    </script>
 </head>
 <body>
 <div class="app-container">
     <nav class="sidebar">
         <ul>
             <li><a class="active" data-page="home" href="#" title="Home">🏠</a></li>
+            <li><a data-page="profile" href="#" title="Profile">👤</a></li>
             <li><a data-page="settings" href="#" title="Settings">⚙️</a></li>
             <li><a data-page="mods" href="#" title="Mods">🧩</a></li>
         </ul>
@@ -101,6 +46,21 @@
                 <div id="status-message"></div>
             </div>
         </div>
+
+        <div class="page" id="profile">
+            <div class="page-content-mods">
+                <h1 class="pixel-title" data-translate="mods">Profile</h1>
+                <div class="launcher-options">
+                    <div class="option-group">
+                        <label data-translate="searchMods" for="mod-search">Search Mods:</label>
+                        <input data-translate-placeholder="searchModsPlaceholder" id="input"
+                               placeholder="Search for mods" type="text">
+                    </div>
+                    <button data-translate="installMods" id="install">Install Selected Mods</button>
+                </div>
+            </div>
+        </div>
+
         <div class="page" id="settings">
             <div class="page-content-settings">
                 <h1 class="pixel-title" data-translate="settings">Settings</h1>
@@ -174,63 +134,14 @@
         </div>
     </main>
 </div>
+
 <script src="render.js"></script>
 <script src="version.js"></script>
 <script src="navigation.js"></script>
 <script src="language.js"></script>
 <script src="memory.js"></script>
-<script>
-    function updateConfigField(field, value) {
-        const updatedConfig = {
-            [field]: value
-        };
-        window.electronAPI.sendSaveConfig(updatedConfig);
-    }
+<script src="api.js"></script>
+<script src="update.js"></script>
 
-    document.getElementById('username').addEventListener('input', (event) => {
-        updateConfigField('name', event.target.value);
-    });
-
-    document.getElementById('version').addEventListener('change', (event) => {
-        updateConfigField('version', document.getElementById('version').options[document.getElementById('version').selectedIndex].text);
-    });
-
-    document.getElementById('modloader').addEventListener('change', (event) => {
-        updateConfigField('mode', event.target.value);
-        updateConfigField('version', 'latest');
-    });
-
-    document.getElementById('memory-input').addEventListener('input', (event) => {
-        updateConfigField('ram', event.target.value);
-    });
-
-    document.getElementById('memory').addEventListener('input', (event) => {
-        updateConfigField('ram', event.target.value);
-    });
-
-    document.getElementById('game-directory').addEventListener('input', (event) => {
-        updateConfigField('path', event.target.value);
-    });
-
-    document.getElementById('java-path').addEventListener('input', (event) => {
-        updateConfigField('java', event.target.value);
-    });
-
-    document.getElementById('jvm-arguments').addEventListener('input', (event) => {
-        updateConfigField('jvm', event.target.value);
-    });
-
-    document.getElementById('language-select').addEventListener('change', (event) => {
-        updateConfigField('language', event.target.value);
-    });
-
-    document.getElementById('auto-updates').addEventListener('change', (event) => {
-        updateConfigField('update', event.target.checked);
-    });
-
-    document.getElementById('alpha-versions').addEventListener('change', (event) => {
-        updateConfigField('alpha', event.target.checked);
-    });
-</script>
 </body>
 </html>
