@@ -2,6 +2,7 @@ document.getElementById('launch-btn').addEventListener('click', () => {
     const name = document.getElementById('username').value
     let version = document.getElementById('version')
     let selectedMode = document.getElementById('modloader')
+    let jvmArguments = document.getElementById('jvm-arguments').value
 
     const ram = document.getElementById('memory').value
     const pathDirectory = document.getElementById('game-directory').value
@@ -11,7 +12,7 @@ document.getElementById('launch-btn').addEventListener('click', () => {
     selectedMode = selectedMode.options[selectedMode.selectedIndex].text
 
     if (window.electron) {
-        window.electron.sendToMain('play-button-clicked', { name, version, selectedMode, ram, pathDirectory, javaPaths })
+        window.electron.sendToMain('play-button-clicked', { name, version, selectedMode, ram, pathDirectory, javaPaths, jvmArguments })
     } else {
         console.error('window.electron is undefined')
     }

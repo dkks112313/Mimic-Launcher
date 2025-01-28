@@ -99,7 +99,8 @@ ipcMain.on('play-button-clicked', (event, data) => {
         mode: data.selectedMode,
         ram: data.ram,
         path: data.pathDirectory,
-        java: data.javaPaths
+        java: data.javaPaths,
+        jvm: data.jvmArguments
     }
 
     const launch_toml = new Client()
@@ -120,6 +121,12 @@ ipcMain.on('play-button-clicked', (event, data) => {
 
     if (params['java'] === undefined || params['java'] === '') {
         params['java'] = null
+    }
+
+    if (params['jvm'] === '') {
+        params['jvm'] = []
+    } else {
+        params['jvm'] = params['jvm'].replace(/\s+/g, "").split(/(?=[-])/);
     }
 
     let progressBar = new ProgressBar({
@@ -187,44 +194,51 @@ ipcMain.on('play-button-clicked', (event, data) => {
             params['java'] = path.join(params['java'], 'bin', 'java')
         }
 
-        let option = {
-            authenticator: await Mojang.login(params['name']),
-            path: folderPath,
-            version: params['version'],
-            loader: {
-                path: '',
-                type: mode,
-                build: 'latest',
-                enable: enables,
-            },
-            JVM_ARGS: [],
-            GAME_ARGS: [],
-            java: {
-                path: params['java'],
-                version: null,
-                type: 'jre',
-            },
-            screen: {
-                width: null,
-                height: null,
-                fullscreen: false,
-            },
-            memory: {
-                min: params['ram'] + 'G',
-                max: params['ram'] + 'G'
-            },
-        }
-
         async function extracted() {
+            let option = {
+                authenticator: await Mojang.login(params['name']),
+                path: folderPath,
+                version: params['version'],
+                loader: {
+                    path: '',
+                    type: mode,
+                    build: 'latest',
+                    enable: enables,
+                },
+                JVM_ARGS: params['jvm'],
+                GAME_ARGS: [],
+                java: {
+                    path: params['java'],
+                    version: null,
+                    type: 'jre',
+                },
+                screen: {
+                    width: null,
+                    height: null,
+                    fullscreen: false,
+                },
+                memory: {
+                    min: params['ram'] + 'G',
+                    max: params['ram'] + 'G'
+                },
+            }
+
+            let cancelInstall = false;
+
+            progressBar.on('aborted', function () {
+                console.info('Installation aborted.');
+                cancelInstall = true;
+            });
+
             if (params['version'] === '1.16.5') {
-                option.JVM_ARGS = ['-Dminecraft.api.env=custom',
+                option.JVM_ARGS = option.JVM_ARGS.concat(['-Dminecraft.api.env=custom',
                     '-Dminecraft.api.auth.host=https://invalid.invalid/',
                     '-Dminecraft.api.account.host=https://invalid.invalid/',
                     '-Dminecraft.api.session.host=https://invalid.invalid/',
-                    '-Dminecraft.api.services.host=https://invalid.invalid/']
+                    '-Dminecraft.api.services.host=https://invalid.invalid/'])
             }
 
-            await launch_json.Launch(option)
+            const launchProcess = launch_json.Launch(option)
 
             launch_json.on('extract', extract => {
                 console.log(extract)
@@ -232,6 +246,9 @@ ipcMain.on('play-button-clicked', (event, data) => {
 
             launch_json.on('progress', (progress, size, element) => {
                 console.log(`Downloading ${element} ${Math.round((progress / size) * 100)}%`)
+                if (cancelInstall) {
+                    launchProcess.kill();
+                }
             })
 
             launch_json.on('check', (progress, size, element) => {
@@ -239,6 +256,9 @@ ipcMain.on('play-button-clicked', (event, data) => {
             })
 
             launch_json.on('estimated', (time) => {
+                if (cancelInstall) {
+                    return;
+                }
                 let hours = Math.floor(time / 3600)
                 let minutes = Math.floor((time - hours * 3600) / 60)
                 let seconds = Math.floor(time - hours * 3600 - minutes * 60)
@@ -247,6 +267,9 @@ ipcMain.on('play-button-clicked', (event, data) => {
             })
 
             launch_json.on('speed', (speed) => {
+                if (cancelInstall) {
+                    return;
+                }
                 console.log(`${(speed / 1067008).toFixed(2)} Mb/s`)
             })
 
@@ -255,6 +278,9 @@ ipcMain.on('play-button-clicked', (event, data) => {
             })
 
             launch_json.on('data', (e) => {
+                if (cancelInstall) {
+                    return;
+                }
                 progressBar._window.hide()
                 console.log(e)
             })
@@ -295,6 +321,12 @@ ipcMain.on('play-button-clicked', (event, data) => {
                 pathToJavas = params['java']
             }
 
+            let jvm = params['jvm'].concat(['-Dminecraft.api.env=custom',
+                    '-Dminecraft.api.auth.host=https://invalid.invalid/',
+                    '-Dminecraft.api.account.host=https://invalid.invalid/',
+                    '-Dminecraft.api.session.host=https://invalid.invalid/',
+                    '-Dminecraft.api.services.host=https://invalid.invalid/'])
+
             await launch_toml.launch({
                 authorization: Authenticator.getAuth(params['name']),
                 root: folderPath,
@@ -314,11 +346,7 @@ ipcMain.on('play-button-clicked', (event, data) => {
                 },
                 forge: path.join(folderPath, 'versions', 'forge-1.16.5', 'forge.jar'),
                 javaPath: pathToJavas,
-                customArgs: ['-Dminecraft.api.env=custom',
-                    '-Dminecraft.api.auth.host=https://invalid.invalid/',
-                    '-Dminecraft.api.account.host=https://invalid.invalid/',
-                    '-Dminecraft.api.session.host=https://invalid.invalid/',
-                    '-Dminecraft.api.services.host=https://invalid.invalid/']
+                customArgs: jvm
             })
 
             launch_toml.on('debug', (e) => console.log(e))
