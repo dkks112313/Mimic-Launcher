@@ -59,4 +59,5 @@ contextBridge.exposeInMainWorld('electronAPI', {
     onDefaultJava: (callback) => ipcRenderer.on('select-default-html-java', callback),
     onConfigLoad: (callback) => ipcRenderer.on("config-load", (event, data) => callback(data)),
     sendSaveConfig: (updatedConfig) => ipcRenderer.send("update-config", updatedConfig),
+    exitButton: (callback) => ipcRenderer.send("exit-button"),
 });

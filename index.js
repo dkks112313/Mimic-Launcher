@@ -118,6 +118,10 @@ async function openFolderDialog(channel) {
         })
 }
 
+ipcMain.on('exit-button', (event, updatedConfig) => {
+    app.quit()
+});
+
 ipcMain.on('update-config', (event, updatedConfig) => {
     updateConfig(updatedConfig); // Обновляем конфиг
 });

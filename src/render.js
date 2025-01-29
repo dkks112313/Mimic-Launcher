@@ -1,3 +1,12 @@
+document.getElementById("exit-btn").addEventListener("click", function(event) {
+    if (window.electron) {
+        event.preventDefault();
+        window.electronAPI.exitButton();
+    } else {
+        console.error('window.electron is undefined')
+    }
+});
+
 document.getElementById('launch-btn').addEventListener('click', () => {
     const name = document.getElementById('username').value
     let version = document.getElementById('version')
