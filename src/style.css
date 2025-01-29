@@ -156,7 +156,7 @@ body {
 }
 
 .page-content-mods {
-    max-width: 700px;
+    max-width: 1000px;
     margin: 0 auto;
     width: 100%;
 }
@@ -274,4 +274,64 @@ button:hover {
     flex-shrink: 0;
     width: auto;
     padding: 0.5rem 1rem;
+}
+
+.mod-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.mod-item {
+    display: flex;
+    align-items: center;
+    border: 1px solid #ccc;
+    padding: 0.5rem;
+}
+
+.mod-image {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    margin-right: 0.5rem;
+}
+
+.mod-details {
+    flex-grow: 1;
+}
+
+.mod-title {
+    font-size: 1rem;
+    margin: 0;
+}
+
+.mod-description {
+    font-size: 0.8rem;
+    color: #666;
+    margin: 0;
+}
+
+.download-button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.8rem;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    margin-left: auto;
+}
+
+.download-button:hover {
+    background-color: #45a049;
+}
+
+.filter-group {
+    display: flex;
+    gap: 10px; /* Расстояние между select */
+    flex-wrap: wrap; /* Если не помещаются, пусть переносятся */
+}
+
+.filter-group select {
+    flex: 1; /* Равномерное распределение ширины */
+    min-width: 150px; /* Минимальная ширина для удобства */
 }

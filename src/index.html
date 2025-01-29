@@ -12,7 +12,7 @@
     <nav class="sidebar">
         <ul class="sidebar-top">
             <li><a class="active" data-page="home" href="#" title="Home">🏠</a></li>
-            <li><a data-page="profile" href="#" title="Profile">👤</a></li>
+            <!--<li><a data-page="profile" href="#" title="Profile">👤</a></li>-->
             <li><a data-page="mods" href="#" title="Mods">🧩</a></li>
         </ul>
         <ul class="sidebar-bottom">
@@ -115,7 +115,6 @@
                             <label><input id="alpha-versions" type="checkbox"> <span data-translate="showAlphaVersions">Show Alpha Versions</span></label>
                         </div>
                     </div>
-                    <!--<button data-translate="saveSettings" id="save-settings">Save Settings</button>-->
                 </div>
             </div>
         </div>
@@ -128,10 +127,44 @@
                         <input data-translate-placeholder="searchModsPlaceholder" id="mod-search"
                                placeholder="Search for mods" type="text">
                     </div>
-                    <div id="mod-list">
-                        <!-- Mod list will be populated dynamically -->
+                    <div class="filter-group">
+                        <select id="mod-loader" data-translate="modLoader">
+                            <option value="" data-translate="allLoaders">All Loaders</option>
+                            <option value="forge">Forge</option>
+                            <option value="fabric">Fabric</option>
+                            <option value="quilt">Quilt</option>
+                            <option value="neoforge">NeoForge</option>
+                        </select>
+                        <select id="mod-version" data-translate="modVersion">
+                            <option value="" data-translate="allVersions">All Versions</option>
+                        </select>
+                        <select id="mod-type" data-translate="modType">
+                            <option value="" data-translate="allTypes">All Types</option>
+                            <option value="mod" data-translate="typeMod">Mods</option>
+                            <option value="shader" data-translate="typeShader">Shaders</option>
+                            <option value="datapack" data-translate="typeDataPack">Data Packs</option>
+                            <option value="modpack" data-translate="typeModPack">Mod Packs</option>
+                        </select>
                     </div>
-                    <button data-translate="installMods" id="install-mods">Install Selected Mods</button>
+                    <div id="mod-list" class="mod-list">
+                        <!-- Пример мода (повторите этот блок для каждого мода) -->
+                        <div class="mod-item">
+                            <img src="path/to/mod1-image.jpg" alt="Mod 1" class="mod-image">
+                            <div class="mod-details">
+                                <h3 class="mod-title">Example Mod 1</h3>
+                                <!--<p class="mod-description">Forge - 1.16.5 - Mod</p>-->
+                            </div>
+                            <button class="download-button" data-translate="download">Download</button>
+                        </div>
+                        <div class="mod-item">
+                            <img src="path/to/mod2-image.jpg" alt="Mod 2" class="mod-image">
+                            <div class="mod-details">
+                                <h3 class="mod-title">Example Mod 2</h3>
+                                <!--<p class="mod-description">Fabric - 1.17.1 - Shader</p>-->
+                            </div>
+                            <button class="download-button" data-translate="download">Download</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
