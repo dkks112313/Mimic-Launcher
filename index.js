@@ -17,6 +17,7 @@ dialog.showErrorBox = () => {
 
 const rootPath = path.join(os.homedir(), "Mimic-Launcher");
 const configPath = path.join(os.homedir(), "Mimic-Launcher", "config.ini");
+const versionPathConfig = path.join(os.homedir(), "Mimic-Launcher", "version.ini");
 
 let win
 const defaultConfig = {
@@ -33,9 +34,17 @@ const defaultConfig = {
         alpha: true,
     }
 };
-let currentConfig = {};
 
-function loadConfig() {
+const defaultVersionConfig = {
+    version: {
+        version_id: "alpha-1.1"
+    }
+};
+
+let currentConfig = {};
+let versionConfig = {};
+
+function loadConfig(configPath, defaultConfig) {
     if (fs.existsSync(configPath)) {
         const fileData = fs.readFileSync(configPath, "utf-8");
         const config = ini.parse(fileData);
@@ -65,12 +74,53 @@ function updateConfig(updatedConfig) {
         core: {...currentConfig.core, ...updatedConfig}
     };
 
-    // Сохраняем изменения в файл
     fs.writeFileSync(configPath, ini.stringify(currentConfig));
     console.log("Config updated and saved.");
 }
 
+async function gitLatestVersion(repository) {
+    const response = await fetch(`https://api.github.com/repos/${repository}/releases/latest`);
+    const data = await response.json();
+    return data['name'];
+}
+
 const createWindow = () => {
+    currentConfig = loadConfig(configPath, defaultConfig);
+    versionConfig = loadConfig(versionPathConfig, defaultVersionConfig);
+
+    gitLatestVersion('dkks112313/dist-install')
+        .then(latestVersion => {
+            if (currentConfig['core']['update'] && versionConfig['version']['version_id'] !== latestVersion) {
+                console.log("Обнаружено обновление, запускаем update.exe...");
+                exec(path.join(rootPath, "update.exe"));
+                process.exit(0);
+            }
+
+            win = new BrowserWindow({
+                width: 1200,
+                height: 800,
+                webPreferences: {
+                    preload: path.join(__dirname, 'preload.js'),
+                    nodeIntegration: false,
+                    contextIsolation: true,
+                },
+                icon: path.join(__dirname, 'icon', 'icon.ico'),
+            });
+
+            win.loadFile('src/index.html');
+            win.setMenuBarVisibility(false);
+
+            win.webContents.on("did-finish-load", () => {
+                win.webContents.send("config-load", currentConfig);
+            });
+        })
+        .catch(error => {
+            console.error("Ошибка при получении версии:", error);
+            createAppWindow();
+        });
+};
+
+const createAppWindow = () => {
     win = new BrowserWindow({
         width: 1200,
         height: 800,
@@ -80,22 +130,15 @@ const createWindow = () => {
             contextIsolation: true,
         },
         icon: path.join(__dirname, 'icon', 'icon.ico'),
-    })
+    });
 
-    win.loadFile('src/index.html')
-    win.setMenuBarVisibility(false)
+    win.loadFile('src/index.html');
+    win.setMenuBarVisibility(false);
 
-    const isUpdated = process.argv.includes('--updated');
-
-    currentConfig = loadConfig();
-    if(currentConfig['core']['update'] && !isUpdated) {
-        exec(path.join(rootPath, "update.exe"))
-        app.quit()
-    }
     win.webContents.on("did-finish-load", () => {
         win.webContents.send("config-load", currentConfig);
     });
-}
+};
 
 app.whenReady().then(() => {
     createWindow()

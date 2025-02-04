@@ -9,7 +9,7 @@
     "start": "electron index.js",
     "dist": "electron-builder",
     "build-windows": "electron-packager ./ Mimic-Launcher --platform=win32 --arch=x64 --prune=true --icon=./icon/icon.ico",
-    "build-mac": "electron-packager ./ Mimic-Launcherc --platform=darwin --arch=x64",
+    "build-mac": "electron-packager ./ Mimic-Launcher --platform=darwin --arch=x64",
     "build-linux": "electron-packager ./ Mimic-Launcher --platform=linux --arch=x64"
   },
   "build": {
