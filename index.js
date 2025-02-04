@@ -85,11 +85,13 @@ const createWindow = () => {
     win.loadFile('src/index.html')
     win.setMenuBarVisibility(false)
 
+    const isUpdated = process.argv.includes('--updated');
+
     currentConfig = loadConfig();
-    /*if(currentConfig['core']['update']) {
+    if(currentConfig['core']['update'] && !isUpdated) {
         exec(path.join(rootPath, "update.exe"))
         app.quit()
-    }*/
+    }
     win.webContents.on("did-finish-load", () => {
         win.webContents.send("config-load", currentConfig);
     });
