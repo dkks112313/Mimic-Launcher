@@ -7,6 +7,7 @@ const {forge} = require("tomate-loaders")
 
 const path = require("path")
 const fs = require("fs")
+const os = require("os")
 const {exec} = require("child_process")
 const ini = require("ini")
 const {downloadJava} = require("./java-downloader/Java")
@@ -14,7 +15,8 @@ const {downloadJava} = require("./java-downloader/Java")
 dialog.showErrorBox = () => {
 }
 
-const configPath = path.join("./config.ini");
+const rootPath = path.join(os.homedir(), "Mimic-Launcher");
+const configPath = path.join(os.homedir(), "Mimic-Launcher", "config.ini");
 
 let win
 const defaultConfig = {
@@ -84,6 +86,10 @@ const createWindow = () => {
     win.setMenuBarVisibility(false)
 
     currentConfig = loadConfig();
+    /*if(currentConfig['core']['update']) {
+        exec(path.join(rootPath, "update.exe"))
+        app.quit()
+    }*/
     win.webContents.on("did-finish-load", () => {
         win.webContents.send("config-load", currentConfig);
     });
@@ -123,7 +129,7 @@ ipcMain.on('exit-button', (event, updatedConfig) => {
 });
 
 ipcMain.on('update-config', (event, updatedConfig) => {
-    updateConfig(updatedConfig); // Обновляем конфиг
+    updateConfig(updatedConfig);
 });
 
 ipcMain.on('open-path-directory', async (event, data) => {
