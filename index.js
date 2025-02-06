@@ -183,7 +183,7 @@ ipcMain.on('open-path-directory', async (event, data) => {
     let folderPath
 
     if (data.path === undefined || data.path === '' || data.path === null) {
-        folderPath = path.join(path.resolve('./Minecraft'))
+        folderPath = path.join(path.resolve(process.env.APPDATA, 'Mimic-Launcher'))
 
         if (!fs.existsSync(folderPath)) {
             fs.mkdirSync(folderPath)
@@ -233,7 +233,7 @@ ipcMain.on('play-button-clicked', (event, data) => {
 
     let pathToDir, folderPath
     if (params['path'] === undefined || params['path'] === '') {
-        pathToDir = path.resolve('./Minecraft')
+        pathToDir = path.resolve(process.env.APPDATA, 'Mimic-Launcher')
         folderPath = path.join(pathToDir)
 
         if (!fs.existsSync(folderPath)) {

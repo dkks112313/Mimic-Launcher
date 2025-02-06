@@ -19,7 +19,7 @@ const translations = {
         jvmArgumentsPlaceholder: "Enter JVM arguments",
         language: "Language:",
         enableAutoUpdates: "Enable Auto Updates",
-        showAlphaVersions: "Show Alpha Versions",
+        showAlphaVersions: "Show Unusual Versions",
         saveSettings: "Save Settings",
         mods: "Mods",
         searchMods: "Search Mods:",
