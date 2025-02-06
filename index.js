@@ -15,6 +15,8 @@ const {downloadJava} = require("./java-downloader/Java")
 dialog.showErrorBox = () => {
 }
 
+const platformRunnable = os.platform() === 'win32' ? 'update.exe' : os.platform() === 'darwin' ? 'update.app' : 'update';
+
 const rootPath = path.join(os.homedir(), "Mimic-Launcher");
 const configPath = path.join(os.homedir(), "Mimic-Launcher", "config.ini");
 const versionPathConfig = path.join(os.homedir(), "Mimic-Launcher", "version.ini");
@@ -92,7 +94,7 @@ const createWindow = () => {
         .then(latestVersion => {
             if (currentConfig['core']['update'] && versionConfig['version']['version_id'] !== latestVersion) {
                 console.log("Обнаружено обновление, запускаем update.exe...");
-                exec(path.join(rootPath, "update.exe"));
+                exec(path.join(rootPath, platformRunnable));
                 process.exit(0);
             }
 
