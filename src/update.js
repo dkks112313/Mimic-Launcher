@@ -48,4 +48,6 @@ document.getElementById('auto-updates').addEventListener('change', (event) => {
 
 document.getElementById('alpha-versions').addEventListener('change', (event) => {
     updateConfigField('alpha', event.target.checked);
+    updateConfigField('version', 'latest');
+    changeFunction()
 });

@@ -21,10 +21,20 @@ function changeFunction(vers = 0) {
             fetch('https://launchermeta.mojang.com/mc/game/version_manifest_v2.json')
                 .then(response => response.json())
                 .then(names => {
+                    const enableVersions = document.getElementById("alpha-versions").checked
                     let namesContains = names['versions'];
+
                     for (let i = 0; i < namesContains.length; i++) {
-                        let newOption = new Option(namesContains[i]['id'], namesContains[i]['id']);
-                        version_list.append(newOption);
+                        if (!enableVersions) {
+                            if (namesContains[i]['type'] === 'release') {
+                                let newOption = new Option(namesContains[i]['id'], namesContains[i]['id']);
+                                version_list.append(newOption);
+                            }
+                        }
+                        else {
+                            let newOption = new Option(namesContains[i]['id'], namesContains[i]['id']);
+                            version_list.append(newOption);
+                        }
                     }
                 })
                 .then(result => {
